@@ -8,9 +8,13 @@ import java.awt.Image;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
+import ch.robin.oester.agario.game.objects.Player;
 
 public class GamePanel extends JPanel implements Runnable {
 
@@ -22,10 +26,7 @@ public class GamePanel extends JPanel implements Runnable {
 	private Image screen;
 	private Graphics2D canvas;
 	private Thread gameThread;
-	
-	private static int SIZE = 50;
-	private double posX = 100;
-	private double posY = 100;
+	private List<Player> players;
 
 	public GamePanel(JFrame frame) {
 		this.frame = frame;
@@ -38,6 +39,9 @@ public class GamePanel extends JPanel implements Runnable {
 		this.canvas = (Graphics2D) screen.getGraphics();
 		
 		this.gameThread = new Thread(this);
+		
+		this.players = new ArrayList<>();
+		players.add(new Player());
 		
 		gameThread.start();
 	}
@@ -69,13 +73,8 @@ public class GamePanel extends JPanel implements Runnable {
 			double x = mouse.getX() - frame.getLocationOnScreen().getX() - frame.getInsets().left;
 			double y = mouse.getY() - frame.getLocationOnScreen().getY() - frame.getInsets().top;
 			
-			double dx = x - posX;
-			double dy = y - posY;
-			double length = Math.sqrt(dx * dx + dy * dy);
-			
-			if(length > 1) {
-				posX += dx / length * timeSinceLastFrame * 100;
-				posY += dy / length * timeSinceLastFrame * 100;
+			for(Player p : players) {
+				p.update(timeSinceLastFrame, x, y);
 			}
 		}
 	}
@@ -89,8 +88,9 @@ public class GamePanel extends JPanel implements Runnable {
 	private void draw() {
 		canvas.setColor(Color.BLACK);
 		canvas.fillRect(0, 0, WIDTH, HEIGHT);
-		canvas.setColor(Color.WHITE);
-		canvas.fillOval((int) posX - SIZE / 2, (int) posY - SIZE / 2, SIZE, SIZE);
+		for(Player p : players) {
+			p.draw(canvas);
+		}
 		repaint();
 	}
 }
