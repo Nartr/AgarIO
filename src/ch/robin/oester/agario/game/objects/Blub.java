@@ -6,13 +6,14 @@ import java.awt.Point;
 
 public class Blub extends WorldObject {
 
-	private static double MAX_SPEED = 10000;
+	private static double MAX_SPEED = 5000.0;
+	private static int LENGTH_SECURITY = 5;
 
 	private double mass;
 	
-	public Blub(World w, double posX, double posY) {
+	public Blub(World w, double posX, double posY, double mass) {
 		super(w, posX, posY);
-		this.mass = 50;
+		this.mass = mass;
 	}
 
 	public void update(float timeSinceLastFrame, double mouseX, double mouseY) {
@@ -20,15 +21,16 @@ public class Blub extends WorldObject {
 		double dy = mouseY - posY;
 		double length = Math.sqrt(dx * dx + dy * dy);
 		
-		if(length > 2) {
-			posX += dx / length * timeSinceLastFrame * (MAX_SPEED / mass);
-			posY += dy / length * timeSinceLastFrame * (MAX_SPEED / mass);
+		if(length > LENGTH_SECURITY) {
+			posX += dx / length * timeSinceLastFrame * (MAX_SPEED / World.ZOOM) / mass;
+			posY += dy / length * timeSinceLastFrame * (MAX_SPEED / World.ZOOM) / mass;
 		}
 	}
 	
 	public void draw(Graphics canvas) {
 		canvas.setColor(new Color(255, 195, 43));
-		canvas.fillOval((int) (w.getCam().getXOnScreen(this) - mass / 2), (int) (w.getCam().getYOnScreen(this) - mass / 2), (int) mass, (int) mass);
+		canvas.fillOval((int) (w.getCam().getXOnScreen(this) - getDrawRadius()), (int) (w.getCam().getYOnScreen(this) - getDrawRadius()), 
+				(int) (2 * getDrawRadius()), (int) (2 * getDrawRadius()));
 	}
 	
 	public boolean isInside(Point p) {
@@ -37,10 +39,18 @@ public class Blub extends WorldObject {
 		
 		double length = Math.sqrt(dx * dx + dy * dy);
 		
-		if(length < mass / 2) {
+		if(length < getDrawRadius()) {
 			return true;
 		}
 		return false;
+	}
+	
+	private double getRadius() {
+		return Math.sqrt(mass / Math.PI);
+	}
+	
+	public double getDrawRadius() {
+		return getRadius() * World.PIXEL_PER_UNIT / World.ZOOM;
 	}
 
 	public void addMass(double amount) {

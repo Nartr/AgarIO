@@ -13,7 +13,12 @@ import ch.robin.oester.agario.game.GameStarter;
 
 public class World {
 	
+	public static final int PIXEL_PER_UNIT = 20;
+	public static final double ZOOM = 1.0;
+	
+	private static final int LINE_SECURITY = 2;
 	private static final int LINE_SIZE = 64;
+	
 	private static final int POINT_SIZE = 15;
 	private static final int FRAMES_PER_POINT = 5;
 	
@@ -32,8 +37,8 @@ public class World {
 		this.width = width;
 		this.height = height;
 		
-		this.linesX = GamePanel.WIDTH / LINE_SIZE + 2;
-		this.linesY = GamePanel.HEIGHT / LINE_SIZE + 2;
+		this.linesX = GamePanel.WIDTH / LINE_SIZE + LINE_SECURITY;
+		this.linesY = GamePanel.HEIGHT / LINE_SIZE + LINE_SECURITY;
 		
 		this.rmd = new Random();
 		
@@ -46,8 +51,10 @@ public class World {
 	public void update(float timeSinceLastFrame) {
 		Point mouse = MouseInfo.getPointerInfo().getLocation();
 		if(GameStarter.getFrame().isShowing()) {
-			double x = mouse.getX() + cam.getPosX() - GameStarter.getFrame().getLocationOnScreen().getX() - GameStarter.getFrame().getInsets().left;
-			double y = mouse.getY() + cam.getPosY() - GameStarter.getFrame().getLocationOnScreen().getY() - GameStarter.getFrame().getInsets().top;
+			double x = mouse.getX() + cam.getPosX() - GameStarter.getFrame().getLocationOnScreen().getX() - 
+					GameStarter.getFrame().getInsets().left;
+			double y = mouse.getY() + cam.getPosY() - GameStarter.getFrame().getLocationOnScreen().getY() - 
+					GameStarter.getFrame().getInsets().top;
 			
 			if(rmd.nextInt(FRAMES_PER_POINT) == 0) {
 				points.add(new Point(rmd.nextInt(width - 2 * POINT_SIZE) + POINT_SIZE, rmd.nextInt(height - 2 * POINT_SIZE) + POINT_SIZE));
@@ -80,7 +87,8 @@ public class World {
 		canvas.setColor(new Color(43, 255, 251));
 		for(Point point : points) {
 			if(cam.isOnScreen(point.getX(), point.getY())) {
-				canvas.fillOval((int) cam.getXOnScreen(point.getX() - POINT_SIZE / 2), (int) cam.getYOnScreen(point.getY() - POINT_SIZE / 2), POINT_SIZE, POINT_SIZE);
+				canvas.fillOval((int) cam.getXOnScreen(point.getX() - POINT_SIZE / 2), (int) cam.getYOnScreen(point.getY() - POINT_SIZE / 2), 
+						POINT_SIZE, POINT_SIZE);
 			}
 		}
 		
@@ -101,5 +109,9 @@ public class World {
 	
 	public List<Point> getPoints() {
 		return points;
+	}
+	
+	public Random getRandom() {
+		return rmd;
 	}
 }
