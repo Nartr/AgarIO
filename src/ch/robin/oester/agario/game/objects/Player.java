@@ -27,6 +27,7 @@ public class Player {
 		if(blub.getPosY() < blub.getMass() / 2) {
 			blub.setPosY(blub.getMass() / 2);
 		}
+		
 		for(int i = 0; i < w.getPoints().size(); i++) {
 			Point p = w.getPoints().get(i);
 			if(w.getCam().isOnScreen(p.getX(), p.getY()) && blub.isInside(p)) {

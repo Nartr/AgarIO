@@ -13,8 +13,8 @@ import ch.robin.oester.agario.game.GameStarter;
 
 public class World {
 	
-	private static final int LINE_SIZE = 32;
-	private static final int POINT_SIZE = 7;
+	private static final int LINE_SIZE = 64;
+	private static final int POINT_SIZE = 15;
 	private static final int FRAMES_PER_POINT = 5;
 	
 	private int width, height;
@@ -32,8 +32,8 @@ public class World {
 		this.width = width;
 		this.height = height;
 		
-		this.linesX = width / LINE_SIZE + 1;
-		this.linesY = height / LINE_SIZE + 1;
+		this.linesX = GamePanel.WIDTH / LINE_SIZE + 2;
+		this.linesY = GamePanel.HEIGHT / LINE_SIZE + 2;
 		
 		this.rmd = new Random();
 		
@@ -41,6 +41,21 @@ public class World {
 		this.points = new ArrayList<>();
 		
 		this.cam = new Camera(player, this);
+	}
+	
+	public void update(float timeSinceLastFrame) {
+		Point mouse = MouseInfo.getPointerInfo().getLocation();
+		if(GameStarter.getFrame().isShowing()) {
+			double x = mouse.getX() + cam.getPosX() - GameStarter.getFrame().getLocationOnScreen().getX() - GameStarter.getFrame().getInsets().left;
+			double y = mouse.getY() + cam.getPosY() - GameStarter.getFrame().getLocationOnScreen().getY() - GameStarter.getFrame().getInsets().top;
+			
+			if(rmd.nextInt(FRAMES_PER_POINT) == 0) {
+				points.add(new Point(rmd.nextInt(width - 2 * POINT_SIZE) + POINT_SIZE, rmd.nextInt(height - 2 * POINT_SIZE) + POINT_SIZE));
+			}
+			
+			player.update(timeSinceLastFrame, x, y);
+			cam.update();
+		}
 	}
 	
 	public void draw(Graphics canvas) {
@@ -64,22 +79,12 @@ public class World {
 		
 		canvas.setColor(new Color(43, 255, 251));
 		for(Point point : points) {
-			if(cam.isOnScreen(point.getX(), point.getY())) canvas.fillOval((int) cam.getXOnScreen(point.getX()), (int) cam.getYOnScreen(point.getY()), POINT_SIZE, POINT_SIZE);
+			if(cam.isOnScreen(point.getX(), point.getY())) {
+				canvas.fillOval((int) cam.getXOnScreen(point.getX() - POINT_SIZE / 2), (int) cam.getYOnScreen(point.getY() - POINT_SIZE / 2), POINT_SIZE, POINT_SIZE);
+			}
 		}
 		
 		player.draw(canvas);
-	}
-	
-	public void update(float timeSinceLastFrame) {
-		Point mouse = MouseInfo.getPointerInfo().getLocation();
-		if(GameStarter.getFrame().isShowing()) {
-			double x = mouse.getX() + cam.getPosX() - GameStarter.getFrame().getLocationOnScreen().getX() - GameStarter.getFrame().getInsets().left;
-			double y = mouse.getY() + cam.getPosY() - GameStarter.getFrame().getLocationOnScreen().getY() - GameStarter.getFrame().getInsets().top;
-			
-			if(rmd.nextInt(FRAMES_PER_POINT) == 0) points.add(new Point(rmd.nextInt(width - 2 * POINT_SIZE) + POINT_SIZE, rmd.nextInt(height - 2 * POINT_SIZE) + POINT_SIZE));
-			player.update(timeSinceLastFrame, x, y);
-			cam.update();
-		}
 	}
 	
 	public Camera getCam() {

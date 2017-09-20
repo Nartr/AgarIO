@@ -14,6 +14,7 @@ public class Camera {
 	public Camera(Player focus, World w) {
 		this.focus = focus;
 		this.w = w;
+		
 		update();
 	}
 	
@@ -35,30 +36,29 @@ public class Camera {
 		}
 	}
 	
-	
-	public boolean isOnScreen(WorldObject w) {
-		return isOnScreen(w.getPosX(), w.getPosY());
-	}
-	
 	public boolean isOnScreen(double x, double y) {
 		return x > posX - RENDER_SECURITY && x < posX + GamePanel.WIDTH + RENDER_SECURITY
 				&& y > posY - RENDER_SECURITY && y < posY + GamePanel.HEIGHT + RENDER_SECURITY;
-	}
-	
-	public double getXOnScreen(WorldObject w) {
-		return getXOnScreen(w.getPosX());
 	}
 	
 	public double getXOnScreen(double worldX) {
 		return worldX - posX;
 	}
 	
-	public double getYOnScreen(WorldObject w) {
-		return getYOnScreen(w.getPosY());
-	}
-	
 	public double getYOnScreen(double worldY) {
 		return worldY - posY;
+	}
+	
+	public boolean isOnScreen(WorldObject w) {
+		return isOnScreen(w.getPosX(), w.getPosY());
+	}
+	
+	public double getXOnScreen(WorldObject w) {
+		return getXOnScreen(w.getPosX());
+	}
+	
+	public double getYOnScreen(WorldObject w) {
+		return getYOnScreen(w.getPosY());
 	}
 	
 	public double getPosX() {
