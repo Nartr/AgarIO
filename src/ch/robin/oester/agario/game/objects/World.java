@@ -14,12 +14,12 @@ import ch.robin.oester.agario.game.GameStarter;
 public class World {
 	
 	public static final int PIXEL_PER_UNIT = 20;
-	public static final double ZOOM = 1.0;
+	public static final double ZOOM = 0.75;
 	
-	private static final int LINE_SECURITY = 2;
-	private static final int LINE_SIZE = 64;
+	private static final int LINE_SECURITY = 3;
+	private static final int LINE_SIZE = 3;
 	
-	private static final int POINT_SIZE = 15;
+	private static final int POINT_SIZE = 1;
 	private static final int FRAMES_PER_POINT = 5;
 	
 	private int width, height;
@@ -37,30 +37,36 @@ public class World {
 		this.width = width;
 		this.height = height;
 		
-		this.linesX = GamePanel.WIDTH / LINE_SIZE + LINE_SECURITY;
-		this.linesY = GamePanel.HEIGHT / LINE_SIZE + LINE_SECURITY;
-		
 		this.rmd = new Random();
 		
 		this.player = new Player(this);
 		this.points = new ArrayList<>();
 		
 		this.cam = new Camera(player, this);
+		
+		updateLines();
+	}
+	
+	private void updateLines() {
+		linesX = (int) (GamePanel.WIDTH * ZOOM / (LINE_SIZE * PIXEL_PER_UNIT)) + LINE_SECURITY;
+		linesY = (int) (GamePanel.HEIGHT * ZOOM / (LINE_SIZE * PIXEL_PER_UNIT)) + LINE_SECURITY;
 	}
 	
 	public void update(float timeSinceLastFrame) {
 		Point mouse = MouseInfo.getPointerInfo().getLocation();
 		if(GameStarter.getFrame().isShowing()) {
-			double x = mouse.getX() + cam.getPosX() - GameStarter.getFrame().getLocationOnScreen().getX() - 
-					GameStarter.getFrame().getInsets().left;
-			double y = mouse.getY() + cam.getPosY() - GameStarter.getFrame().getLocationOnScreen().getY() - 
-					GameStarter.getFrame().getInsets().top;
+			double x = (mouse.getX() - GameStarter.getFrame().getLocationOnScreen().getX() - GameStarter.getFrame().getInsets().left) * ZOOM
+					+ cam.getPosX();
+			double y = (mouse.getY() - GameStarter.getFrame().getLocationOnScreen().getY() - GameStarter.getFrame().getInsets().top) * ZOOM
+					+ cam.getPosY();
 			
 			if(rmd.nextInt(FRAMES_PER_POINT) == 0) {
-				points.add(new Point(rmd.nextInt(width - 2 * POINT_SIZE) + POINT_SIZE, rmd.nextInt(height - 2 * POINT_SIZE) + POINT_SIZE));
+				points.add(new Point(rmd.nextInt(width - 2 * getDrawRadius()) + getDrawRadius(), 
+						rmd.nextInt(height - 2 * getDrawRadius()) + getDrawRadius()));
 			}
 			
 			player.update(timeSinceLastFrame, x, y);
+			updateLines();
 			cam.update();
 		}
 	}
@@ -69,30 +75,36 @@ public class World {
 		canvas.setColor(new Color(62, 62, 62));
 		canvas.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
 		
-		int amountX = (int) cam.getPosX() / LINE_SIZE;
-		int firstX = amountX * LINE_SIZE;
-		int amountY = (int) cam.getPosY() / LINE_SIZE;
-		int firstY = amountY * LINE_SIZE;
+		int amountX = (int) (cam.getPosX() / (LINE_SIZE * PIXEL_PER_UNIT));
+		int firstX = (int) (amountX * LINE_SIZE * PIXEL_PER_UNIT);
+		int amountY = (int) (cam.getPosY() / (LINE_SIZE * PIXEL_PER_UNIT));
+		int firstY = (int) (amountY * LINE_SIZE * PIXEL_PER_UNIT);
 		
 		canvas.setColor(new Color(235, 235, 235));
 		for(int i = 0; i < linesX; i++) {
-			canvas.drawLine((int) cam.getXOnScreen(firstX) + i * LINE_SIZE, (int) cam.getYOnScreen(firstY), 
-					(int) cam.getXOnScreen(firstX) + i * LINE_SIZE, (int) cam.getYOnScreen(firstY) + linesY * LINE_SIZE);
+			canvas.drawLine((int) (cam.getXOnScreen(firstX) + i * LINE_SIZE * PIXEL_PER_UNIT / ZOOM), (int) cam.getYOnScreen(firstY), 
+					(int) (cam.getXOnScreen(firstX) + i * LINE_SIZE * PIXEL_PER_UNIT / ZOOM), 
+					(int) (cam.getYOnScreen(firstY) + linesY * LINE_SIZE * PIXEL_PER_UNIT / ZOOM));
 		}
 		for(int i = 0; i < linesY; i++) {
-			canvas.drawLine((int) cam.getXOnScreen(firstX), (int) cam.getYOnScreen(firstY) + i * LINE_SIZE, 
-					(int) cam.getXOnScreen(firstX) + linesX * LINE_SIZE, (int) cam.getYOnScreen(firstY) + i * LINE_SIZE);
+			canvas.drawLine((int) cam.getXOnScreen(firstX), (int) (cam.getYOnScreen(firstY) + i * LINE_SIZE * PIXEL_PER_UNIT / ZOOM), 
+					(int) (cam.getXOnScreen(firstX) + linesX * LINE_SIZE * PIXEL_PER_UNIT / ZOOM), 
+					(int) (cam.getYOnScreen(firstY) + i * LINE_SIZE * PIXEL_PER_UNIT / ZOOM));
 		}
 		
 		canvas.setColor(new Color(43, 255, 251));
 		for(Point point : points) {
 			if(cam.isOnScreen(point.getX(), point.getY())) {
-				canvas.fillOval((int) cam.getXOnScreen(point.getX() - POINT_SIZE / 2), (int) cam.getYOnScreen(point.getY() - POINT_SIZE / 2), 
-						POINT_SIZE, POINT_SIZE);
+				canvas.fillOval((int) cam.getXOnScreen(point.getX()) - getDrawRadius(), (int) cam.getYOnScreen(point.getY()) - getDrawRadius(), 
+						2 * getDrawRadius(), 2 * getDrawRadius());
 			}
 		}
 		
 		player.draw(canvas);
+	}
+	
+	public int getDrawRadius() {
+		return (int) (Math.sqrt(POINT_SIZE / Math.PI) * PIXEL_PER_UNIT / ZOOM);
 	}
 	
 	public Camera getCam() {

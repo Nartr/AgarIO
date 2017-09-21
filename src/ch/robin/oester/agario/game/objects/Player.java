@@ -19,18 +19,18 @@ public class Player {
 
 	public void update(float timeSinceLastFrame, double mouseX, double mouseY) {
 		blub.update(timeSinceLastFrame, mouseX, mouseY);
-		if(blub.getPosX() > w.getWidth() - blub.getDrawRadius()) {
-			blub.setPosX(w.getWidth() - blub.getDrawRadius());
+		if(blub.getPosX() > w.getWidth() - blub.getRadius()) {
+			blub.setPosX(w.getWidth() - blub.getRadius());
 		}
-		if(blub.getPosX() < blub.getDrawRadius()) {
-			blub.setPosX(blub.getDrawRadius());
+		if(blub.getPosX() < blub.getRadius()) {
+			blub.setPosX(blub.getRadius());
 		}
 		
-		if(blub.getPosY() > w.getHeight() - blub.getDrawRadius()) {
-			blub.setPosY(w.getHeight() - blub.getDrawRadius());
+		if(blub.getPosY() > w.getHeight() - blub.getRadius()) {
+			blub.setPosY(w.getHeight() - blub.getRadius());
 		}
-		if(blub.getPosY() < blub.getDrawRadius()) {
-			blub.setPosY(blub.getDrawRadius());
+		if(blub.getPosY() < blub.getRadius()) {
+			blub.setPosY(blub.getRadius());
 		}
 		
 		for(int i = 0; i < w.getPoints().size(); i++) {

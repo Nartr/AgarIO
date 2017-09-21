@@ -19,34 +19,34 @@ public class Camera {
 	}
 	
 	public void update() {
-		if(focus.getBlub().getPosX() < GamePanel.WIDTH / 2) {
+		if(focus.getBlub().getPosX() < GamePanel.WIDTH * World.ZOOM / 2) {
 			this.posX = 0;
-		} else if(focus.getBlub().getPosX() > w.getWidth() - GamePanel.WIDTH / 2) {
-			this.posX = w.getWidth() - GamePanel.WIDTH;
+		} else if(focus.getBlub().getPosX() > w.getWidth() - GamePanel.WIDTH * World.ZOOM / 2) {
+			this.posX = w.getWidth() - GamePanel.WIDTH * World.ZOOM;
 		} else {
-			this.posX = focus.getBlub().getPosX() - GamePanel.WIDTH / 2;
+			this.posX = focus.getBlub().getPosX() - GamePanel.WIDTH * World.ZOOM / 2;
 		}
 		
-		if(focus.getBlub().getPosY() < GamePanel.HEIGHT / 2) {
+		if(focus.getBlub().getPosY() < GamePanel.HEIGHT * World.ZOOM / 2) {
 			this.posY = 0;
-		} else if(focus.getBlub().getPosY() > w.getHeight() - GamePanel.HEIGHT / 2) {
-			this.posY = w.getHeight() - GamePanel.HEIGHT;
+		} else if(focus.getBlub().getPosY() > w.getHeight() - GamePanel.HEIGHT * World.ZOOM / 2) {
+			this.posY = w.getHeight() - GamePanel.HEIGHT * World.ZOOM;
 		} else {
-			this.posY = focus.getBlub().getPosY() - GamePanel.HEIGHT / 2;
+			this.posY = focus.getBlub().getPosY() - GamePanel.HEIGHT * World.ZOOM / 2;
 		}
 	}
 	
 	public boolean isOnScreen(double x, double y) {
-		return x > posX - RENDER_SECURITY && x < posX + GamePanel.WIDTH + RENDER_SECURITY
-				&& y > posY - RENDER_SECURITY && y < posY + GamePanel.HEIGHT + RENDER_SECURITY;
+		return x > posX - RENDER_SECURITY && x < posX + GamePanel.WIDTH * World.ZOOM + RENDER_SECURITY
+				&& y > posY - RENDER_SECURITY && y < posY + GamePanel.HEIGHT * World.ZOOM + RENDER_SECURITY;
 	}
 	
 	public double getXOnScreen(double worldX) {
-		return worldX - posX;
+		return (worldX - posX) / World.ZOOM;
 	}
 	
 	public double getYOnScreen(double worldY) {
-		return worldY - posY;
+		return (worldY - posY) / World.ZOOM;
 	}
 	
 	public boolean isOnScreen(WorldObject w) {

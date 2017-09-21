@@ -39,18 +39,18 @@ public class Blub extends WorldObject {
 		
 		double length = Math.sqrt(dx * dx + dy * dy);
 		
-		if(length < getDrawRadius()) {
+		if(length < getRadius()) {
 			return true;
 		}
 		return false;
 	}
 	
-	private double getRadius() {
-		return Math.sqrt(mass / Math.PI);
+	public double getRadius() {
+		return Math.sqrt(mass / Math.PI) * World.PIXEL_PER_UNIT;
 	}
 	
 	public double getDrawRadius() {
-		return getRadius() * World.PIXEL_PER_UNIT / World.ZOOM;
+		return getRadius() / World.ZOOM;
 	}
 
 	public void addMass(double amount) {
