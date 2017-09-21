@@ -13,6 +13,7 @@ import ch.robin.oester.agario.game.objects.World;
 public class GamePanel extends JPanel implements Runnable {
 
 	public static final int WIDTH = 800, HEIGHT = 600;
+	public static final double INIT_ZOOM = 0.75;
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -33,7 +34,7 @@ public class GamePanel extends JPanel implements Runnable {
 		
 		this.gameThread = new Thread(this);
 		
-		this.world = new World(2000, 2000);
+		this.world = new World(2000, 2000, INIT_ZOOM);
 		
 		gameThread.start();
 	}

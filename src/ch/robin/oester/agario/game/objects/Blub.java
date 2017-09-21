@@ -2,11 +2,10 @@ package ch.robin.oester.agario.game.objects;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Point;
 
 public class Blub extends WorldObject {
 
-	private static double MAX_SPEED = 5000.0;
+	private static double MAX_SPEED = 1000.0;
 	private static int LENGTH_SECURITY = 5;
 
 	private double mass;
@@ -22,8 +21,8 @@ public class Blub extends WorldObject {
 		double length = Math.sqrt(dx * dx + dy * dy);
 		
 		if(length > LENGTH_SECURITY) {
-			posX += dx / length * timeSinceLastFrame * (MAX_SPEED / World.ZOOM) / mass;
-			posY += dy / length * timeSinceLastFrame * (MAX_SPEED / World.ZOOM) / mass;
+			posX += dx / length * timeSinceLastFrame * (MAX_SPEED / (0.1 * getDrawRadius()));
+			posY += dy / length * timeSinceLastFrame * (MAX_SPEED / (0.1 * getDrawRadius()));
 		}
 	}
 	
@@ -33,9 +32,9 @@ public class Blub extends WorldObject {
 				(int) (2 * getDrawRadius()), (int) (2 * getDrawRadius()));
 	}
 	
-	public boolean isInside(Point p) {
-		double dx = p.getX() - posX;
-		double dy = p.getY() - posY;
+	public boolean isInside(WorldObject p) {
+		double dx = p.getPosX() - posX;
+		double dy = p.getPosY() - posY;
 		
 		double length = Math.sqrt(dx * dx + dy * dy);
 		
@@ -50,7 +49,7 @@ public class Blub extends WorldObject {
 	}
 	
 	public double getDrawRadius() {
-		return getRadius() / World.ZOOM;
+		return getRadius() / w.getZoom();
 	}
 
 	public void addMass(double amount) {

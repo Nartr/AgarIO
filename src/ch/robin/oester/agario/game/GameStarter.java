@@ -1,5 +1,7 @@
 package ch.robin.oester.agario.game;
 
+import java.awt.Insets;
+
 import javax.swing.JFrame;
 
 public class GameStarter {
@@ -16,7 +18,19 @@ public class GameStarter {
 		frame.setVisible(true);
 	}
 	
-	public static JFrame getFrame() {
-		return frame;
+	public static boolean isShowing() {
+		return frame.isShowing();
+	}
+	
+	public static double getPosX() {
+		return frame.getLocationOnScreen().getX();
+	}
+	
+	public static double getPosY() {
+		return frame.getLocationOnScreen().getY();
+	}
+
+	public static Insets getInsets() {
+		return frame.getInsets();
 	}
 }

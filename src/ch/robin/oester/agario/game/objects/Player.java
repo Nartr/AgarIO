@@ -1,12 +1,15 @@
 package ch.robin.oester.agario.game.objects;
 
 import java.awt.Graphics;
-import java.awt.Point;
+
+import ch.robin.oester.agario.game.GamePanel;
 
 public class Player {
 	
 	private static final int START_SIZE = 10;
 	private static final int START_SECURITY = 36;
+	private static final double MASS_PER_POINT = 0.1;
+	private static final double ZOOM_LAMBDA = 2.5;
 	
 	private World w;
 	private Blub blub;
@@ -33,10 +36,13 @@ public class Player {
 			blub.setPosY(blub.getRadius());
 		}
 		
+		double zoom = Math.log10(blub.getMass()) / ZOOM_LAMBDA + GamePanel.INIT_ZOOM;
+		w.setZoom(Math.min(w.getMaxZoom(), zoom));
+		
 		for(int i = 0; i < w.getPoints().size(); i++) {
-			Point p = w.getPoints().get(i);
-			if(w.getCam().isOnScreen(p.getX(), p.getY()) && blub.isInside(p)) {
-				blub.addMass(0.1);
+			WorldPoint p = w.getPoints().get(i);
+			if(w.getCam().isOnScreen(p.getPosX(), p.getPosY()) && blub.isInside(p)) {
+				blub.addMass(MASS_PER_POINT);
 				w.getPoints().remove(i);
 			}
 		}
